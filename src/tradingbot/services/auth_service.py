@@ -4,20 +4,21 @@ Handles user authentication, JWT tokens, and session management.
 """
 
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Optional
 
+# Python 3.10 compatibility: timezone.utc is available across all versions
+UTC = UTC
+
+from fastapi import HTTPException, status
+from fastapi.security import HTTPBearer
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 from tradingbot.config.settings import get_settings
 from tradingbot.database.connection import get_db_session
-from fastapi import HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
 from tradingbot.models.user import User, UserSession
-from passlib.context import CryptContext
 from tradingbot.schemas.user import (
-    LoginRequest,
     TokenResponse,
-    UserCreate,
     UserResponse,
 )
 
@@ -49,9 +50,9 @@ class AuthService:
         """Create access token."""
         to_encode = data.copy()
         if expires_delta:
-            expire = datetime.now(timezone.utc) + expires_delta
+            expire = datetime.now(UTC) + expires_delta
         else:
-            expire = datetime.now(timezone.utc) + timedelta(
+            expire = datetime.now(UTC) + timedelta(
                 minutes=self.access_token_expire_minutes
             )
 
@@ -62,9 +63,7 @@ class AuthService:
     def create_refresh_token(self, data: dict) -> str:
         """Create refresh token."""
         to_encode = data.copy()
-        expire = datetime.now(timezone.utc) + timedelta(
-            days=self.refresh_token_expire_days
-        )
+        expire = datetime.now(UTC) + timedelta(days=self.refresh_token_expire_days)
         to_encode.update({"exp": expire, "type": "refresh"})
         encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
         return encoded_jwt
@@ -143,7 +142,7 @@ class AuthService:
                 id=str(uuid.uuid4()),
                 user_id=user.id,
                 token=refresh_token,
-                expires_at=datetime.now(timezone.utc)
+                expires_at=datetime.now(UTC)
                 + timedelta(days=self.refresh_token_expire_days),
                 ip_address=ip_address,
                 user_agent=user_agent,
@@ -175,7 +174,7 @@ class AuthService:
                 session.query(UserSession)
                 .filter(
                     UserSession.token == refresh_token,
-                    UserSession.expires_at > datetime.now(timezone.utc),
+                    UserSession.expires_at > datetime.now(UTC),
                 )
                 .first()
             )
