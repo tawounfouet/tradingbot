@@ -1,0 +1,169 @@
+services:
+  # MongoDB database service
+  mongo:
+    image: mongo
+    container_name: mongo-nosql-db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PWD}
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb://${MONGODB_USER}:${MONGODB_PWD}@localhost:27017/admin --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - mongo_data:/data/db
+    
+
+  # mongo-express is a web-based MongoDB admin interface
+  # It allows you to manage your MongoDB databases through a web interface
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-admin-ui
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      # Identifiants pour accéder à l'interface web
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGODB_USER_ADMIN}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGODB_PWD_ADMIN}
+      # Identifiants pour se connecter à MongoDB
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_PWD}
+      ME_CONFIG_MONGODB_URL: "mongodb://${MONGODB_USER}:${MONGODB_PWD}@mongo:27017/admin?authSource=admin"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+
+  # PostgreSQL database service
+  # This service uses the official PostgreSQL image
+  postgres:
+    image: postgres:14
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PWD:-postgres}
+      POSTGRES_DB: crypto_bot_db
+    ports:
+      - 5434:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  #  adminer is a lightweight database management tool
+  adminer:
+    image: adminer
+    container_name: postgres-admin-ui
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  minio:
+    image: minio/minio
+    container_name: minio-s3-service
+    restart: always
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER_ADMIN:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_PWD_ADMIN:-minioadmin}
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 30s
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: "no"  # Change from on-failure to no
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER:-minioadmin} ${MINIO_ROOT_PASSWORD:-minioadmin};
+      /usr/bin/mc mb --ignore-existing myminio/crypto-bot-data;
+      /usr/bin/mc anonymous set download myminio/crypto-bot-data;
+      # List the buckets to verify
+      echo 'Listing buckets:';
+      /usr/bin/mc ls myminio;
+      exit 0;
+      "
+  
+  # crypto-bot-worker is the main service that runs the crypto bot
+  crypto-bot-worker:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: crypto-bot-worker
+    restart: always
+    volumes:
+      - ./crypto-bot-data:/root/crypto-bot-data
+      - ./src:/app/src  # Pour faciliter les modifications pendant le test
+    environment:
+    # Variables d'environnement pour MongoDB
+    - MONGODB_USER=${MONGODB_USER}
+    - MONGODB_PWD=${MONGODB_PWD}
+    - MONGODB_HOST=mongo
+    - MONGODB_PORT=27017
+    # Variables d'environnement pour PostgreSQL
+    - POSTGRES_USER=${POSTGRES_USER:-postgres}
+    - POSTGRES_PWD=${POSTGRES_PWD:-postgres}
+    - POSTGRES_HOST=postgres
+    - POSTGRES_PORT=5432
+    - POSTGRES_DB=crypto_bot_db
+    # Variables d'environnement pour MinIO
+    - MINIO_ENDPOINT=minio:9000
+    - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
+    - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin}
+    - MINIO_SECURE=0
+    - MINIO_BUCKET=crypto-bot-data
+    depends_on:
+      # - mongo
+      # - postgres
+      # - minio
+      postgres:
+          condition: service_healthy
+      mongo:
+          condition: service_healthy
+      minio:
+          condition: service_healthy
+    command: ["python", "-m", "src.tradingbot.main"]
+    #command: ["python", "-m", "src.test_mongodb"]  # Exécuter le script de test
+    #command: ["python", "-m", "src.test_databases"]  # Exécuter le nouveau script de test
+    #command: ["python", "-m", "src.test_minio"]  # Exécuter le script de test MinIO
+
+volumes:
+  crypto-bot-data:
+  mongo_data:
+  postgres_data:
+  minio_data:
+  # minio_config:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     device: ./minio/config
+  #     o: bind
+

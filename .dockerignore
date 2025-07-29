@@ -1,0 +1,90 @@
+# Docker ignore file for Crypto Trading Bot
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Test files
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Development tools
+.mypy_cache/
+.flake8
+bandit-report.json
+
+# Logs
+logs/
+*.log
+
+# Data files
+data/
+*.sqlite3
+*.db
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Environment files
+.env
+.env.*
+
+# Temporary files
+tmp/
+temp/
+archives/
+resources/
+
+# Node modules (if any)
+node_modules/
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Linux
+*~

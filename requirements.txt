@@ -1,0 +1,38 @@
+# Crypto Trading Bot Dependencies
+# Verify package versions before using them
+
+# Core FastAPI Backend Dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.11.7
+pydantic_core==2.33.2
+pydantic-settings==2.10.1
+email-validator==2.2.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# Database Dependencies
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9  # Pour PostgreSQL
+pymongo==4.6.0 # Pour MongoDB
+
+# Data Processing
+pandas==2.2.3 # Pour la manipulation de données
+numpy==1.26.4 # Pour les opérations numériques
+pyarrow>=14.0.0 # Pour le traitement de données en mémoire
+fastparquet>=2023.10.0 # Pour le traitement de données parquet
+
+# External Services
+python-binance==1.0.18 # Pour l'API Binance
+minio==7.2.0  # Pour MinIO
+requests==2.31.0 # Pour les requêtes HTTP
+python-dotenv==1.0.0 # Pour la gestion des variables d'environnement
+
+# Development Tools
+flake8==7.2.0 # Pour le linting
+black==25.1.0 # Pour le formatage du code
+bandit==1.8.3 # Pour l'analyse de sécurité
+
+# Optional UI
+streamlit==1.45.1 # Pour l'interface utilisateur

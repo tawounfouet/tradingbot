@@ -1,0 +1,297 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools-scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tradingbot"
+version = "1.0.0"
+description = "Advanced cryptocurrency trading bot with automated strategies and FastAPI backend"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Thomas AWOUNFOUET", email = "tawounfouet@gmail.com"}
+]
+maintainers = [
+    {name = "Thomas AWOUNFOUET", email = "tawounfouet@gmail.com"}
+]
+keywords = [
+    "cryptocurrency", 
+    "trading", 
+    "bot", 
+    "fastapi", 
+    "algorithmic-trading",
+    "binance",
+    "technical-analysis"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Framework :: FastAPI",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+requires-python = ">=3.11"
+
+# Core dependencies
+dependencies = [
+    # Core FastAPI Backend Dependencies
+    "fastapi==0.104.1",
+    "uvicorn[standard]==0.24.0",
+    "pydantic==2.11.7",
+    "pydantic-core==2.33.2",
+    "pydantic-settings==2.10.1",
+    "email-validator==2.2.0",
+    "python-jose[cryptography]==3.3.0",
+    "passlib[bcrypt]==1.7.4",
+    "python-multipart==0.0.6",
+    
+    # Database Dependencies
+    "sqlalchemy==2.0.23",
+    "psycopg2-binary==2.9.9",
+    "pymongo==4.6.0",
+    
+    # Data Processing
+    "pandas==2.2.3",
+    "numpy==1.26.4",
+    "pyarrow>=14.0.0",
+    "fastparquet>=2023.10.0",
+    
+    # External Services
+    "python-binance==1.0.18",
+    "minio==7.2.0",
+    "requests==2.31.0",
+    "python-dotenv==1.0.0",
+]
+
+[project.optional-dependencies]
+# Development dependencies
+dev = [
+    "flake8==7.2.0",
+    "black==25.1.0",
+    "bandit==1.8.3",
+    "mypy>=1.0.0",
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+    "pre-commit>=3.0.0",
+    "isort>=5.12.0",
+]
+
+# Testing dependencies
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+    "httpx>=0.24.0",
+    "faker>=19.0.0",
+]
+
+# Documentation dependencies
+docs = [
+    "sphinx>=5.0.0",
+    "sphinx-rtd-theme>=1.0.0",
+    "sphinx-autodoc-typehints>=1.19.0",
+]
+
+# UI dependencies
+ui = [
+    "streamlit==1.45.1",
+]
+
+# All optional dependencies
+all = [
+    "crypto-bot-api[dev,test,docs,ui]"
+]
+
+[project.urls]
+Homepage = "https://github.com/tawounfouet/tradingbot"
+Documentation = "https://github.com/tawounfouet/tradingbot#readme"
+Repository = "https://github.com/tawounfouet/tradingbot.git"
+Issues = "https://github.com/tawounfouet/tradingbot/issues"
+Changelog = "https://github.com/tawounfouet/tradingbot/blob/main/CHANGELOG.md"
+
+[project.scripts]
+crypto-bot = "src.tradingbot.main:main"
+crypto-bot-dev = "src.tradingbot.main:dev_main"
+
+[tool.setuptools]
+packages = ["tradingbot"]
+package-dir = {"" = "src"}
+
+[tool.setuptools.package-data]
+"tradingbot" = ["**/*.sql", "**/*.json", "**/*.yaml", "**/*.yml"]
+
+# Black configuration for code formatting
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+# isort configuration for import sorting
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["src"]
+known_third_party = ["fastapi", "pydantic", "sqlalchemy", "pandas", "numpy"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+# MyPy configuration for type checking
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = [
+    "python_binance.*",
+    "minio.*",
+    "streamlit.*",
+]
+ignore_missing_imports = true
+
+# Pytest configuration
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+testpaths = ["src/tradingbot/tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "api: marks tests as API tests",
+    "database: marks tests as database tests",
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+# Bandit security configuration
+[tool.bandit]
+exclude_dirs = ["tests", "migrations"]
+skips = ["B101", "B601"]
+
+# Flake8 configuration (in setup.cfg or tox.ini format, but specified here for reference)
+# Note: Flake8 doesn't support pyproject.toml yet, so you might need a separate .flake8 file
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "E501", "W503"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "migrations",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+]
+
+# Ruff configuration (modern Python linter, alternative to flake8)
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "migrations",
+]
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.ruff.isort]
+known-first-party = ["src"]
