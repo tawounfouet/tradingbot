@@ -29,13 +29,14 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Framework :: FastAPI",
     "Topic :: Office/Business :: Financial :: Investment",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 
 # Core dependencies
 dependencies = [
@@ -112,19 +113,19 @@ ui = [
 
 # All optional dependencies
 all = [
-    "crypto-bot-api[dev,test,docs,ui]"
+    "tradingbot[dev,test,docs,ui]"
 ]
 
 [project.urls]
 Homepage = "https://github.com/tawounfouet/tradingbot"
-Documentation = "https://github.com/tawounfouet/tradingbot#readme"
+Documentation = "https://tawounfouet.github.io/tradingbot/"
 Repository = "https://github.com/tawounfouet/tradingbot.git"
 Issues = "https://github.com/tawounfouet/tradingbot/issues"
 Changelog = "https://github.com/tawounfouet/tradingbot/blob/main/CHANGELOG.md"
 
 [project.scripts]
-crypto-bot = "src.tradingbot.main:main"
-crypto-bot-dev = "src.tradingbot.main:dev_main"
+tradingbot = "tradingbot.main:main"
+tradingbot-dev = "tradingbot.main:dev_main"
 
 [tool.setuptools]
 packages = ["tradingbot"]
