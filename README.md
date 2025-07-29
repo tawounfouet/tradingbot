@@ -7,8 +7,21 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688.svg)](https://fastapi.tiangolo.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![CI](https://github.com/tawounfouet/tradingbot/workflows/CI/badge.svg)](https://github.com/tawounfouet/tradingbot/actions/workflows/ci.yml)
+[![Documentation](https://github.com/tawounfouet/tradingbot/workflows/Deploy%20Documentation/badge.svg)](https://github.com/tawounfouet/tradingbot/actions/workflows/docs.yml)
+[![Documentation Site](https://img.shields.io/badge/docs-mkdocs-blue.svg)](https://tawounfouet.github.io/tradingbot/)
 
 > **Advanced cryptocurrency trading bot with automated strategies built with FastAPI, featuring real-time market data integration, multiple database support, and comprehensive backtesting capabilities.**
+
+## 📚 Documentation
+
+Visit our comprehensive documentation at: **[https://tawounfouet.github.io/tradingbot/](https://tawounfouet.github.io/tradingbot/)**
+
+- 📖 [Getting Started Guide](https://tawounfouet.github.io/tradingbot/getting-started/installation/)
+- 🔧 [Configuration Guide](https://tawounfouet.github.io/tradingbot/getting-started/configuration/)
+- 🐳 [Docker Setup](https://tawounfouet.github.io/tradingbot/getting-started/docker/)
+- 📊 [API Reference](https://tawounfouet.github.io/tradingbot/api/overview/)
+- 🧠 [Strategy Development](https://tawounfouet.github.io/tradingbot/user-guide/strategies/)
 
 ## ✨ Features
 
