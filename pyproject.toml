@@ -15,10 +15,10 @@ maintainers = [
     {name = "Thomas AWOUNFOUET", email = "tawounfouet@gmail.com"}
 ]
 keywords = [
-    "cryptocurrency", 
-    "trading", 
-    "bot", 
-    "fastapi", 
+    "cryptocurrency",
+    "trading",
+    "bot",
+    "fastapi",
     "algorithmic-trading",
     "binance",
     "technical-analysis"
@@ -49,18 +49,18 @@ dependencies = [
     "python-jose[cryptography]==3.3.0",
     "passlib[bcrypt]==1.7.4",
     "python-multipart==0.0.6",
-    
+
     # Database Dependencies
     "sqlalchemy==2.0.23",
     "psycopg2-binary==2.9.9",
     "pymongo==4.6.0",
-    
+
     # Data Processing
     "pandas==2.2.3",
     "numpy==1.26.4",
     "pyarrow>=14.0.0",
     "fastparquet>=2023.10.0",
-    
+
     # External Services
     "python-binance==1.0.18",
     "minio==7.2.0",
@@ -93,9 +93,16 @@ test = [
 
 # Documentation dependencies
 docs = [
-    "sphinx>=5.0.0",
-    "sphinx-rtd-theme>=1.0.0",
-    "sphinx-autodoc-typehints>=1.19.0",
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.4.0",
+    "mkdocstrings[python]>=0.24.0",
+    "mkdocs-autorefs>=0.5.0",
+    "mkdocs-gen-files>=0.5.0",
+    "mkdocs-literate-nav>=0.6.0",
+    "mkdocs-section-index>=0.3.0",
+    "mkdocs-swagger-ui-tag>=0.6.0",
+    "mkdocs-include-markdown-plugin>=6.0.0",
+    "pymdown-extensions>=10.0.0",
 ]
 
 # UI dependencies

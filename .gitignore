@@ -55,6 +55,7 @@ dmypy.json
 
 # docs
 docs/_build/
+site/  # MkDocs build output
 
 # Configuration files (keep them in repo)
 # .flake8

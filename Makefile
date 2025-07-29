@@ -8,13 +8,19 @@ help:
 	@echo "Crypto Trading Bot - Available Commands:"
 	@echo ""
 	@echo "Development:"
-	@echo "  install      Install production dependencies"
+		@echo "  install      Install production dependencies"
 	@echo "  install-dev  Install development dependencies"
 	@echo "  run          Run the FastAPI application"
 	@echo "  test         Run tests with coverage"
 	@echo "  lint         Run linting (flake8, mypy, bandit)"
 	@echo "  format       Format code (black, isort)"
 	@echo "  clean        Clean up cache files and build artifacts"
+	@echo ""
+	@echo "Documentation:"
+	@echo "  docs-serve   Serve documentation locally (http://127.0.0.1:8000)"
+	@echo "  docs-build   Build documentation site"
+	@echo "  docs-deploy  Deploy documentation to GitHub Pages"
+	@echo "  docs-clean   Clean documentation build files"
 	@echo ""
 	@echo "Docker:"
 	@echo "  docker-up    Start all services with Docker Compose"
@@ -124,6 +130,19 @@ prod:
 # Health check
 health:
 	curl -f http://localhost:8000/health || echo "Service is not running"
+
+# Documentation commands
+docs-serve:
+	$(PYTHON) -m mkdocs serve
+
+docs-build:
+	$(PYTHON) -m mkdocs build
+
+docs-deploy:
+	$(PYTHON) -m mkdocs gh-deploy --force
+
+docs-clean:
+	rm -rf site/
 
 # Show project info
 info:
